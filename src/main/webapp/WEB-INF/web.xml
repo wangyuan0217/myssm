@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                      http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1"
+         metadata-complete="true">
+
+
+    <!--默认的首页-->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.htm</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>default.html</welcome-file>
+        <welcome-file>default.htm</welcome-file>
+        <welcome-file>default.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!--通过网上查阅资料，我们看到大部分人都是把404页面提示信息提交给Servelt自己管理，-->
+    <!--我们也依样画瓢，在web.xml中配置，如下：-->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/static/view/404.html</location>
+    </error-page>
+
+    <!-- 如果是用maven命令生成的xml，需要修改servlet版本为3.1 -->
+    <!-- 配置DispatcherServlet -->
+    <servlet>
+        <display-name>myssm</display-name>    <!-- 项目名称 -->
+        <servlet-name>mvc-dispatcher</servlet-name> <!-- mvc调度器 -->
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!-- 配置springMVC需要加载的配置文件
+            spring-dao.xml,spring-service.xml,spring-web.xml
+            Mybatis - > spring -> springmvc
+         -->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:spring/spring-*.xml</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mvc-dispatcher</servlet-name>
+        <!-- 默认匹配所有的请求 -->
+        <!-- 我们默认配置这个是为了让我们的Spring框架接管Servelt，实现Spring控制所有站点请求 -->
+        <url-pattern>/</url-pattern>
+        <!--<url-pattern>/css/*</url-pattern>-->
+        <!--<url-pattern>/images/*</url-pattern>-->
+        <!--<url-pattern>/fonts/*</url-pattern>-->
+    </servlet-mapping>
+
+    <!-- spring框架提供的字符集过滤器 -->
+    <!-- spring Web MVC框架提供了org.springframework.web.filter.CharacterEncodingFilter
+    用于解决POST方式造成的中文乱码问题  -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <!-- force强制，促使 -->
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--druid ==> WEB方式监控配置-->
+    <!--查看地址http://localhost:8080/myssm/druidWebStatFilter-->
+
+    <!--Druid内置提供了一个StatViewServlet用于展示Druid的统计信息。-->
+    <!--这个StatViewServlet的用途包括：-->
+    <!--提供监控信息展示的html页面-->
+    <!--提供监控信息的JSON API-->
+    <servlet>
+        <servlet-name>DruidStatView</servlet-name>
+        <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DruidStatView</servlet-name>
+        <url-pattern>/druid/*</url-pattern>
+    </servlet-mapping>
+
+    <!--WebStatFilter用于采集web-jdbc关联监控的数据。-->
+    <filter>
+        <filter-name>druidWebStatFilter</filter-name>
+        <filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+        <!--排除一些不必要的url-->
+        <init-param>
+            <param-name>exclusions</param-name>
+            <param-value>/public/*,*.js,*.css,/druid*,*.jsp,*.swf</param-value>
+        </init-param>
+        <!--让druid能够知道当前的session的用户是谁。-->
+        <init-param>
+            <param-name>principalSessionName</param-name>
+            <param-value>sessionInfo</param-value>
+        </init-param>
+        <!--druid 0.2.7版本开始支持profile，配置profileEnable能够监控单个url调用的sql列表。-->
+        <init-param>
+            <param-name>profileEnable</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <!--&lt;!&ndash;session统计功能&ndash;&gt;-->
+        <!--<init-param>-->
+        <!--<param-name>sessionStatEnable</param-name>-->
+        <!--<param-value>false</param-value>-->
+        <!--</init-param>-->
+
+
+        <!--&lt;!&ndash;默认sessionStatMaxCount是1000个&ndash;&gt;-->
+        <!--<init-param>-->
+        <!--<param-name>sessionStatMaxCount</param-name>-->
+        <!--<param-value>1000</param-value>-->
+        <!--</init-param>-->
+
+        <!--&lt;!&ndash;如果你的user信息保存在cookie中，你可以配置principalCookieName，使得druid知道当前的user是谁&ndash;&gt;-->
+        <!--&lt;!&ndash;根据需要，把其中的xxx.user修改为你user信息保存在cookie中的cookieName&ndash;&gt;-->
+        <!--<init-param>-->
+        <!--<param-name>principalCookieName</param-name>-->
+        <!--<param-value>xxx.user</param-value>-->
+        <!--</init-param>-->
+    </filter>
+    <filter-mapping>
+        <filter-name>druidWebStatFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+</web-app>
