@@ -5,21 +5,24 @@
 <mapper namespace="com.trump.dao.UserDao">
 
     <!--查找-->
-    <select id="findOneById" resultType="com.trump.domain.User" parameterType="String">
+    <select id="findOneById" resultType="user" parameterType="String">
       SELECT * FROM user WHERE id = #{userId}
     </select>
 
     <!--查找-->
-    <select id="findUserByName" resultType="com.trump.domain.User" parameterType="String">
+    <select id="findUserByName" resultType="user" parameterType="String">
         SELECT * FROM user WHERE username = #{name}
     </select>
 
-    <insert id="addUser" parameterType="com.trump.domain.User">
+    <insert id="add" parameterType="user">
       INSERT INTO user
       (username, password, sex, description)
       VALUES
       (#{username}, #{password}, #{sex}, #{description})
     </insert>
 
+    <select id="findAll" resultType="user">
+        SELECT * FROM user
+    </select>
 
 </mapper>

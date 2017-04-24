@@ -15,6 +15,7 @@ public class UserServiceImpl implements UserService {
     UserDao mUserDao;
 
     public void add(User user) throws Exception {
+        mUserDao.add(user);
     }
 
     public void del(User user) throws Exception {
@@ -33,11 +34,7 @@ public class UserServiceImpl implements UserService {
         return mUserDao.findUserByName(name);
     }
 
-    public void addUser(User user) throws Exception {
-        mUserDao.addUser(user);
-    }
-
     public List<User> findAll() throws Exception {
-        return null;
+        return mUserDao.findAll();
     }
 }

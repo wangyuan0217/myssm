@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -133,7 +134,7 @@ public class UserController extends BaseController {
             return mav.addObject("message", "描述不能为空");
 
         try {
-            mUserService.addUser(user);
+            mUserService.add(user);
         } catch (Exception e) {
             e.printStackTrace();
             return mav.addObject("message", "异常");
@@ -141,6 +142,20 @@ public class UserController extends BaseController {
         mav.setViewName("home");
         mav.addObject("code", Constant.Response.OK);
         mav.addObject("message", "恭喜,注册成功");
+        return mav;
+    }
+
+    @RequestMapping(value = "findAll", produces = {"application/json;charset=utf-8"})
+//    @ResponseBody
+    public ModelAndView findAll(HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView("home");
+        try {
+            List<User> list_user = mUserService.findAll();
+            request.getSession().setAttribute("list_user", list_user);
+            mav.addObject("list_user", list_user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return mav;
     }
 

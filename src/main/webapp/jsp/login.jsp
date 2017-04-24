@@ -56,6 +56,9 @@
 </form>
 
 
+<script type="text/javascript" src="${path}/js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="${path}/js/jquery.tips.js"></script>
+<script type="text/javascript" src="${path}/js/bootstrap.min.js"></script>
 <script type="text/javascript">
     function checkNull() {
         var name = $("#name").val();
@@ -108,8 +111,5 @@
 
 
 </script>
-<script type="text/javascript" src="${path}/js/jquery-3.1.1.min.js"></script>
-<script type="text/javascript" src="${path}/js/jquery.tips.js"></script>
-<script type="text/javascript" src="${path}/js/bootstrap.min.js"></script>
 </body>
 </html>

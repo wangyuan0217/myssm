@@ -22,108 +22,45 @@
 </head>
 <body class="container">
 
-<nav class="navbar navbar-inverse">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Project name</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">Dropdown <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li class="dropdown-header">Nav header</li>
-                        <li><a href="#">Separated link</a></li>
-                        <li><a href="#">One more separated link</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div><!--/.nav-collapse -->
-    </div>
-</nav>
-
 <h1 align="right">Welcome <font color="red">${sessionScope.get("uname")}</font></h1>
-
-<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-    <ol class="carousel-indicators">
-        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-    </ol>
-    <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <img src="http://img4.imgtn.bdimg.com/it/u=1615176452,1394034536&fm=23&gp=0.jpg" alt="First slide">
-        </div>
-        <div class="item">
-            <img src="http://img2.imgtn.bdimg.com/it/u=3273171625,2637209723&fm=23&gp=0.jpg" alt="Second slide">
-        </div>
-        <div class="item">
-            <img src="http://img5.imgtn.bdimg.com/it/u=2296082357,837174642&fm=23&gp=0.jpg" alt="Third slide">
-        </div>
-    </div>
-    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-    </a>
-    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-    </a>
-</div>
-
 <h2 align="right"><a href="${path}/jsp/form.jsp">表单提交</a></h2>
 
-<br><br>
-<div hidden="hidden">
-    <input type="file" name="file"
-           id="file" size="28"/>
-    <input type="button" value="上传" class="btn btn-default" onclick="upload()"/>
-    <span id="temp"></span>
-</div>
-
+<input type="button" value="刷新" onclick="refreshTable()"/>
 <table class="table table-bordered table-hover">
     <caption>边框表格布局</caption>
     <thead>
     <tr>
-        <th>名称</th>
-        <th>城市</th>
-        <th>邮编</th>
+        <th width="10%">Id</th>
+        <th width="15%">用户名</th>
+        <th width="15%">用户密码</th>
+        <th width="15%">性别</th>
+        <th width="35%">描述</th>
+        <th width="10%">操作</th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>Tanmay</td>
-        <td>Bangalore</td>
-        <td>560001</td>
-    </tr>
-    <tr>
-        <td>Sachin</td>
-        <td>Mumbai</td>
-        <td>400003</td>
-    </tr>
-    <tr>
-        <td>Uma</td>
-        <td>Pune</td>
-        <td>411027</td>
-    </tr>
+    <%--<c:forEach items="user" var="list_user" varStatus="status">--%>
+    <c:forEach items="${sessionScope.list_user}" var="user" varStatus="status">
+        <tr>
+            <td>${user.id}</td>
+            <td>${user.username}</td>
+            <td>${user.password}</td>
+            <td>${user.sex}</td>
+            <td>${user.description}</td>
+            <td>
+                <a onclick="edit()">编辑</a>
+                <a onclick="del()">删除</a>
+            </td>
+        </tr>
+    </c:forEach>
     </tbody>
 </table>
 
-<h5 align="center">
+<div hidden="hidden">
+    <span>${sessionScope.list_user}</span>
+</div>
+
+<h5 align="center" hidden="hidden">
     <ul class="pagination">
         <li><a href="#">&laquo;</a></li>
         <li class="active"><a href="#">1</a></li>
@@ -135,23 +72,34 @@
     </ul>
 </h5>
 
-<script>
-    function upload() {
-        $.ajaxFileUpload({
-            url: "${path}/user/uploadPic",
-            secureuri: false, //是否需要安全协议，一般设置为false
-            fileElementId: 'file',
-            dataType: "json",
-            contentType: "application/x-www-form-urlencoded; charset=utf-8",
-            success: function (data) {
-                alert(data.message);
-                $("#temp").text(data.message);
-            }
-        })
-    }
-</script>
 <script type="text/javascript" src="${path}/js/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="${path}/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${path}/js/jquery.ajaxfileupload.js"></script>
+<script>
+    //    $(function () {
+    //        $('table tr td').click(function () {
+    //            var td = this.parentNode, tr = td.parentNode;
+    //            alert('行号：' + tr.rowIndex + '\n列号：' + td.cellIndex);
+    //        })
+    //    });
+    function refreshTable() {
+        $.ajax({
+            type: "get",
+            url: "${path}/user/findAll",
+            success: function () {
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    }
+    function edit() {
+
+        alert($("table tr:eq(3) td:eq(4)").text())
+    }
+    function del() {
+        alert(this.nodeValue);
+    }
+</script>
 </body>
 </html>
