@@ -19,6 +19,9 @@
     <title>主页</title>
     <!--引入bootstrap样式-->
     <link href="${path}/css/bootstrap.css" rel="stylesheet" type="text/css"/>
+    <!--第一步：引入Javascript / CSS （CDN）-->
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
 </head>
 <body class="container">
 
@@ -26,7 +29,7 @@
 <h2 align="right"><a href="${path}/jsp/form.jsp">表单提交</a></h2>
 
 <input type="button" value="刷新" onclick="refreshTable()"/>
-<table class="table table-bordered table-hover">
+<table class="display" id="table">
     <caption>边框表格布局</caption>
     <thead>
     <tr>
@@ -39,67 +42,43 @@
     </tr>
     </thead>
     <tbody>
-    <%--<c:forEach items="user" var="list_user" varStatus="status">--%>
-    <c:forEach items="${sessionScope.list_user}" var="user" varStatus="status">
-        <tr>
-            <td>${user.id}</td>
-            <td>${user.username}</td>
-            <td>${user.password}</td>
-            <td>${user.sex}</td>
-            <td>${user.description}</td>
-            <td>
-                <a onclick="edit()">编辑</a>
-                <a onclick="del()">删除</a>
-            </td>
-        </tr>
-    </c:forEach>
     </tbody>
 </table>
 
-<div hidden="hidden">
-    <span>${sessionScope.list_user}</span>
-</div>
-
-<h5 align="center" hidden="hidden">
-    <ul class="pagination">
-        <li><a href="#">&laquo;</a></li>
-        <li class="active"><a href="#">1</a></li>
-        <li class="disabled"><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="#">5</a></li>
-        <li><a href="#">&raquo;</a></li>
-    </ul>
-</h5>
-
 <script type="text/javascript" src="${path}/js/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="${path}/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="${path}/js/jquery.ajaxfileupload.js"></script>
+<!-- DataTables -->
+<script type="text/javascript" charset="utf8" src="http://cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
 <script>
-    //    $(function () {
-    //        $('table tr td').click(function () {
-    //            var td = this.parentNode, tr = td.parentNode;
-    //            alert('行号：' + tr.rowIndex + '\n列号：' + td.cellIndex);
-    //        })
-    //    });
-    function refreshTable() {
-        $.ajax({
-            type: "get",
-            url: "${path}/user/findAll",
-            success: function () {
-            },
-            error: function () {
-                alert("error");
+    <!--第三步:初始化Datatables-->
+    $(document).ready(function () {
+        $('#table').DataTable({
+            ajax: '${path}/user/findAll',
+            dataSrc: "data",
+            columns: [
+                {data: 'id'},
+                {data: 'username'},
+                {data: 'password'},
+                {data: 'sex'},
+                {data: 'description'},
+                {data: 'description'}
+            ],
+            oLanguage: {
+                "sProcessing": "正在加载中......",
+                "sLengthMenu": "每页显示 _MENU_ 条记录",
+                "sZeroRecords": "对不起，查询不到相关数据！",
+                "sEmptyTable": "表中无数据存在！",
+                "sInfo": "当前显示 _START_ 到 _END_ 条，共 _TOTAL_ 条记录",
+                "sInfoFiltered": "数据表中共为 _MAX_ 条记录",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上一页",
+                    "sNext": "下一页",
+                    "sLast": "末页"
+                }
             }
         });
-    }
-    function edit() {
-
-        alert($("table tr:eq(3) td:eq(4)").text())
-    }
-    function del() {
-        alert(this.nodeValue);
-    }
+    });
 </script>
 </body>
 </html>

@@ -146,17 +146,15 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "findAll", produces = {"application/json;charset=utf-8"})
-//    @ResponseBody
-    public ModelAndView findAll(HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView("home");
+    @ResponseBody
+    public String findAll(HttpServletRequest request) {
         try {
             List<User> list_user = mUserService.findAll();
-            request.getSession().setAttribute("list_user", list_user);
-            mav.addObject("list_user", list_user);
+            return getCommonReturn(Constant.Response.OK, "成功", list_user);
         } catch (Exception e) {
             e.printStackTrace();
+            return getCommonReturn(Constant.Response.UNKNOWN_ERROR, "服务器错误");
         }
-        return mav;
     }
 
 
